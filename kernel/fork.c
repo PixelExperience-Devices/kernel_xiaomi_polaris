@@ -539,7 +539,7 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
 	scs_task_init(tsk);
 
 #ifdef CONFIG_CC_STACKPROTECTOR
-	tsk->stack_canary = get_random_long();
+	tsk->stack_canary = get_random_canary();
 #endif
 
 	/*
