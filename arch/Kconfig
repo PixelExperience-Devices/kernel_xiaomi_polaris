@@ -911,6 +911,18 @@ config RELR
 	  well as compatible NM and OBJCOPY utilities (llvm-nm and llvm-objcopy
 	  are compatible).
 
+config ARCH_HAS_REFCOUNT
+	bool
+	help
+	  An architecture selects this when it has implemented refcount_t
+	  using open coded assembly primitives that provide an optimized
+	  refcount_t implementation, possibly at the expense of some full
+	  refcount state checks of CONFIG_REFCOUNT_FULL=y.
+
+	  The refcount overflow check behavior, however, must be retained.
+	  Catching overflows is the primary security concern for protecting
+	  against bugs in reference counts.
+
 config REFCOUNT_FULL
 	bool "Perform full reference count validation at the expense of speed"
 	help
