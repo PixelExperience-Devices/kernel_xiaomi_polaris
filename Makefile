@@ -731,10 +731,15 @@ export DISABLE_CFI
 endif
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
-KBUILD_CFLAGS   += -Os
+  KBUILD_CFLAGS   += -Os
 else
-KBUILD_CFLAGS   += -O2
+  ifeq ($(cc-name),clang)
+    KBUILD_CFLAGS   += -O3
+  else
+    KBUILD_CFLAGS   += -O2
+  endif
 endif
+
 
 ifdef CONFIG_CC_WERROR
 KBUILD_CFLAGS	+= -Werror
