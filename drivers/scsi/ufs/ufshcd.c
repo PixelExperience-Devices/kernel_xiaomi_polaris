@@ -9986,17 +9986,9 @@ static ssize_t health_attr_show(struct device *dev,
 {
 	struct ufs_hba *hba = dev_get_drvdata(dev);
 	int buff_len = hba->desc_size.health_desc;
-	u8 *desc_buf = NULL;
+	u8 desc_buf[hba->desc_size.dev_desc];
 	int err;
 
-	if (buff_len) {
-		desc_buf = kmalloc(buff_len, GFP_KERNEL);
-		if (!desc_buf) {
-			dev_err(hba->dev,
-				"%s: Failed to allocate desc_buf\n", __func__);
-			return 0;
-		}
-	}
 	pm_runtime_get_sync(hba->dev);
 	err = ufshcd_read_desc(hba, QUERY_DESC_IDN_HEALTH, 0,
 					desc_buf, buff_len);
