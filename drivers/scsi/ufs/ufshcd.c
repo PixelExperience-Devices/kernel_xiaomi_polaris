@@ -10003,7 +10003,11 @@ erasesize_show(struct device *dev,
 		/* Got a valid one, and should be same as others. */
 		break;
 	}
-	pm_runtime_put_sync(hba->dev);
+	pm_runtime_mark_last_busy(hba->dev);
+	pm_runtime_put_noidle(hba->dev);
+	if (ret)
+		return 0;
+
 	return snprintf(buf, PAGE_SIZE, "0x%x\n", ret ? 0 : erasesize);
 }
 
@@ -10105,7 +10109,8 @@ static ssize_t health_attr_show(struct device *dev,
 	pm_runtime_get_sync(hba->dev);
 	err = ufshcd_read_desc(hba, QUERY_DESC_IDN_HEALTH, 0,
 					desc_buf, buff_len);
-	pm_runtime_put_sync(hba->dev);
+	pm_runtime_mark_last_busy(hba->dev);
+	pm_runtime_put_noidle(hba->dev);
 	if (err || (attr->bytes + attr->len) > desc_buf[0])
 		return 0;
 
