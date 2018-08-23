@@ -35,7 +35,7 @@ LDFLAGS_vmlinux	+= --fix-cortex-a53-843419
 else
   ifeq ($(ld-name),gold)
 # Pass --no-fix-cortex-a53-843419 to ensure the erratum fix is disabled
-LDFLAGS	+= --no-fix-cortex-a53-843419
+KBUILD_LDFLAGS += --no-fix-cortex-a53-843419
   endif
 endif
 
@@ -100,13 +100,13 @@ KBUILD_CPPFLAGS	+= -mbig-endian
 AS		+= -EB
 # Prefer the baremetal ELF build target, but not all toolchains include
 # it so fall back to the standard linux version if needed.
-LDFLAGS		+= -EB $(call ld-option, -maarch64elfb, -maarch64linuxb)
+KBUILD_LDFLAGS	+= -EB $(call ld-option, -maarch64elfb, -maarch64linuxb)
 UTS_MACHINE	:= aarch64_be
 else
 KBUILD_CPPFLAGS	+= -mlittle-endian
 AS		+= -EL
 # Same as above, prefer ELF but fall back to linux target if needed.
-LDFLAGS		+= -EL $(call ld-option, -maarch64elf, -maarch64linux)
+KBUILD_LDFLAGS	+= -EL $(call ld-option, -maarch64elf, -maarch64linux)
 UTS_MACHINE	:= aarch64
 endif
 
