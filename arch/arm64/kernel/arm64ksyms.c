@@ -24,19 +24,12 @@
 #include <linux/delay.h>
 #include <linux/in6.h>
 #include <linux/syscalls.h>
-#include <linux/uaccess.h>
 #include <linux/io.h>
 #include <linux/arm-smccc.h>
 #include <linux/kprobes.h>
 
 #include <asm/cacheflush.h>
 #include <asm/checksum.h>
-
-	/* user mem (segment) */
-EXPORT_SYMBOL(__arch_copy_from_user);
-EXPORT_SYMBOL(__arch_copy_to_user);
-EXPORT_SYMBOL(__arch_clear_user);
-EXPORT_SYMBOL(__arch_copy_in_user);
 
 	/* physical memory */
 EXPORT_SYMBOL(memstart_addr);
