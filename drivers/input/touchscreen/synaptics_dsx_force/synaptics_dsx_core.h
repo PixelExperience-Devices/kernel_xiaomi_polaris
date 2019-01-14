@@ -54,6 +54,8 @@
 #include <linux/clk.h>
 #endif
 
+#include <linux/pm_qos.h>
+
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 38))
 #define KERNEL_ABOVE_2_6_38
 #endif
@@ -345,6 +347,7 @@ struct synaptics_rmi4_data {
 	struct delayed_work rb_work;
 	struct workqueue_struct *rb_workqueue;
 	struct synaptics_dsx_panel_power_seq panel_power_seq;
+	struct pm_qos_request pm_qos_req;
 #ifdef CONFIG_DRM
 	struct notifier_block drm_notifier;
 	struct work_struct reset_work;
