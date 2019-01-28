@@ -3247,6 +3247,9 @@ static void synaptics_rmi4_empty_fn_list(struct synaptics_rmi4_data *rmi4_data)
 	}
 	INIT_LIST_HEAD(&rmi->support_fn_list);
 
+	rmi4_data->f11_wakeup_gesture = false;
+	rmi4_data->f12_wakeup_gesture = false;
+
 	return;
 }
 
@@ -4533,6 +4536,9 @@ static int synaptics_rmi4_reset_device(struct synaptics_rmi4_data *rmi4_data,
 		return 0;
 	}
 
+	pr_info("%s from %pS, rebuild = %d\n", __func__,
+			__builtin_return_address(0), rebuild);
+
 	mutex_lock(&(rmi4_data->rmi4_reset_mutex));
 
 	synaptics_rmi4_irq_enable(rmi4_data, false, false);
@@ -5530,6 +5536,12 @@ static void synaptics_rmi4_f12_wg(struct synaptics_rmi4_data *rmi4_data,
 	list_for_each_entry(fhandler, &rmi->support_fn_list, link) {
 		if (fhandler->fn_number == SYNAPTICS_RMI4_F12)
 			break;
+	}
+
+	if (!fhandler->extra) {
+		pr_err("%s: fhandler->extra=NULL, fn_number=%hhu", __func__,
+				fhandler->fn_number);
+		return;
 	}
 
 	extra_data = (struct synaptics_rmi4_f12_extra_data *)fhandler->extra;
