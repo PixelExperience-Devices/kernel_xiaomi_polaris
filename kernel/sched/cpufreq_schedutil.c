@@ -1071,6 +1071,8 @@ static void sugov_limits(struct cpufreq_policy *policy)
 		raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
 		cpufreq_policy_apply_limits(policy);
 		mutex_unlock(&sg_policy->work_lock);
+	} else {
+		cpufreq_policy_apply_limits_fast(policy);
 	}
 
 	sg_policy->need_freq_update = true;
