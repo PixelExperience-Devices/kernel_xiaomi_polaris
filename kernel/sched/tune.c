@@ -913,6 +913,32 @@ schedtune_boostgroup_init(struct schedtune *st, int idx)
 	st->idx = idx;
 }
 
+#ifdef CONFIG_STUNE_ASSIST
+static void write_default_values(struct cgroup_subsys_state *css)
+{
+	u8 i;
+	char cg_name[11];
+	static const int boost_values[3] = { 0, 0, 0 };
+	static const bool prefer_idle_values[3] = { 1, 1, 0 };
+	static const bool sched_colocate_values[3] = { 0, 0, 0 };
+	static const bool sched_boost_no_override_values[3] = { 1, 1, 0 };
+	static const char *stune_groups[] =
+	{ "top-app", "foreground", "background" };
+
+	/* Find cgroup and write default values */
+	cgroup_name(css->cgroup, cg_name, sizeof(cg_name));
+
+	for (i = 0; i < ARRAY_SIZE(stune_groups); i++) {
+		if (!strcmp(cg_name, stune_groups[i])) {
+			boost_write(css, NULL, boost_values[i]);
+			prefer_idle_write(css, NULL, prefer_idle_values[i]);
+			sched_colocate_write(css, NULL, sched_colocate_values[i]);
+			sched_boost_override_write(css, NULL, sched_boost_no_override_values[i]);
+		}
+	}
+}
+#endif
+
 static struct cgroup_subsys_state *
 schedtune_css_alloc(struct cgroup_subsys_state *parent_css)
 {
@@ -929,9 +955,17 @@ schedtune_css_alloc(struct cgroup_subsys_state *parent_css)
 	}
 
 	/* Allow only a limited number of boosting groups */
+#ifdef CONFIG_STUNE_ASSIST
+	for (idx = 1; idx < BOOSTGROUPS_COUNT; ++idx) {
+		if (!allocated_group[idx])
+			break;
+		write_default_values(&allocated_group[idx]->css);
+	}
+#else
 	for (idx = 1; idx < BOOSTGROUPS_COUNT; ++idx)
 		if (!allocated_group[idx])
 			break;
+#endif
 	if (idx == BOOSTGROUPS_COUNT) {
 		pr_err("Trying to create more than %d SchedTune boosting groups\n",
 		       BOOSTGROUPS_COUNT);
