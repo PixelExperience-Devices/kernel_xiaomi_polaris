@@ -981,23 +981,24 @@ schedtune_boostgroup_init(struct schedtune *st, int idx)
 static void write_default_values(struct cgroup_subsys_state *css)
 {
 	u8 i;
-	char cg_name[15];
-	static const int boost_values[3] = { 0, 0, 0 };
-	static const bool prefer_idle_values[3] = { 1, 1, 0 };
-	static const bool sched_colocate_values[3] = { 0, 0, 0 };
-	static const bool sched_boost_no_override_values[3] = { 1, 1, 0 };
-	static const char *stune_groups[] =
-	{ "top-app", "foreground", "background" };
+	struct groups_data {
+		char *name;
+		int boost;
+		bool prefer_idle;
+		bool colocate;
+		bool no_override;
+	};
+	struct groups_data groups[3] = {
+		{ "top-app",	5, 1, 0, 0 },
+		{ "foreground", 0, 1, 0, 0 },
+		{ "background", 0, 0, 0, 0 }};
 
-	/* Find cgroup and write default values */
-	cgroup_name(css->cgroup, cg_name, NAME_MAX + 1);
-
-	for (i = 0; i < ARRAY_SIZE(stune_groups); i++) {
-		if (!strcmp(cg_name, stune_groups[i])) {
-			boost_write(css, NULL, boost_values[i]);
-			prefer_idle_write(css, NULL, prefer_idle_values[i]);
-			sched_colocate_write(css, NULL, sched_colocate_values[i]);
-			sched_boost_override_write(css, NULL, sched_boost_no_override_values[i]);
+	for (i = 0; i < ARRAY_SIZE(groups); i++) {
+		if (!strcmp(css->cgroup->kn->name, groups[i].name)) {
+			boost_write(css, NULL, groups[i].boost);
+			prefer_idle_write(css, NULL, groups[i].prefer_idle);
+			sched_colocate_write(css, NULL, groups[i].colocate);
+			sched_boost_override_write(css, NULL, groups[i].no_override);
 		}
 	}
 }
