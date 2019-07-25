@@ -32,6 +32,7 @@
 #include "governor_memlat.h"
 #include <linux/perf_event.h>
 #include <linux/of_device.h>
+#include <soc/qcom/scm.h>
 
 enum ev_index {
 	INST_IDX,
@@ -133,6 +134,14 @@ static unsigned long get_cnt(struct memlat_hwmon *hw)
 {
 	int cpu;
 	struct cpu_grp_info *cpu_grp = to_cpu_grp(hw);
+
+	/*
+	 * Some of SCM call is very heavy(+20ms) so perf IPI could
+	 * be stuck on the CPU which contributes long latency.
+	 */
+	if (under_scm_call()) {
+		return 0;
+	}
 
 	for_each_cpu(cpu, &cpu_grp->inited_cpus)
 		read_perf_counters(cpu, cpu_grp);
