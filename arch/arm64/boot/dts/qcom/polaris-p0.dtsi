@@ -757,6 +757,7 @@
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
 		thermal-sensors = <&pm8998_adc_tm 0x4c>;
+		wake-capable-sensor;
 		thermal-governor = "user_space";
 
 		trips {
@@ -772,6 +773,7 @@
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
 		thermal-sensors = <&pm8998_adc_tm 0x4d>;
+		wake-capable-sensor;
 		thermal-governor = "user_space";
 
 		trips {
@@ -787,6 +789,7 @@
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
 		thermal-sensors = <&pm8998_adc_tm 0x4e>;
+		wake-capable-sensor;
 		thermal-governor = "user_space";
 
 		trips {
@@ -802,6 +805,7 @@
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
 		thermal-sensors = <&pm8998_adc_tm 0x4f>;
+		wake-capable-sensor;
 		thermal-governor = "user_space";
 
 		trips {
@@ -817,6 +821,7 @@
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
 		thermal-sensors = <&pm8998_adc_tm 0x50>;
+		wake-capable-sensor;
 		thermal-governor = "user_space";
 
 		trips {
@@ -832,6 +837,7 @@
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
 		thermal-sensors = <&pm8998_adc_tm 0x51>;
+		wake-capable-sensor;
 		thermal-governor = "user_space";
 
 		trips {
