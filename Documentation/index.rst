@@ -26,6 +26,14 @@ This section describes CPU vulnerabilities and their mitigations.
 
    hw-vuln/index
 
+Architecture-agnostic documentation
+-----------------------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   asm-annotations
+
 Architecture-specific documentation
 -----------------------------------
 
