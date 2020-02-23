@@ -14,5 +14,6 @@
 #obj-$(CONFIG_TOUCHSCREEN_FTS) += focaltech_upgrade_ft8716.o
 obj-$(CONFIG_TOUCHSCREEN_FTS) += focaltech_upgrade_ft8719.o
 #obj-$(CONFIG_TOUCHSCREEN_FTS) += focaltech_upgrade_ft8736.o
+obj-$(CONFIG_TOUCHSCREEN_FTS) += focaltech_upgrade_ft5452.o
 #obj-$(CONFIG_TOUCHSCREEN_FTS) += focaltech_upgrade_idc.o
 #obj-$(CONFIG_TOUCHSCREEN_FTS) += focaltech_upgrade_test.o

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 - 2017 Novatek, Inc.
- * Copyright (C) 2018 XiaoMi, Inc.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * $Revision: 20544 $
  * $Date: 2017-12-20 11:08:15 +0800 (週三, 20 十二月 2017) $
@@ -860,7 +860,6 @@ static const char *nvt_get_config(struct nvt_ts_data *ts)
 	NVT_LOG("Choose config %d: %s", i,
 		 ts->config_array[i].nvt_cfg_name);
 	ts->current_index = i;
-
 	return ts->config_array[i].nvt_cfg_name;
 }
 
@@ -1066,11 +1065,9 @@ static void nvt_switch_mode_work(struct work_struct *work)
 	struct nvt_mode_switch *ms = container_of(work, struct nvt_mode_switch, switch_mode_work);
 	struct nvt_ts_data *data = ms->nvt_data;
 	unsigned char value = ms->mode;
-	char ch[64] = {0x0,};
 
 	if (value >= INPUT_EVENT_WAKUP_MODE_OFF && value <= INPUT_EVENT_WAKUP_MODE_ON) {
 		data->gesture_enabled = value - INPUT_EVENT_WAKUP_MODE_OFF;
-		snprintf(ch, sizeof(ch), "%s", data->gesture_enabled ? "enabled" : "disabled");
 	} else {
 		NVT_ERR("Does not support touch mode %d\n", value);
 	}
@@ -1607,6 +1604,7 @@ static int32_t nvt_ts_probe(struct i2c_client *client, const struct i2c_device_i
 #if ((TOUCH_KEY_NUM > 0) || WAKEUP_GESTURE)
 	int32_t retry = 0;
 #endif
+	char *tp_maker = NULL;
 
 	NVT_LOG("start\n");
 
@@ -1765,7 +1763,6 @@ static int32_t nvt_ts_probe(struct i2c_client *client, const struct i2c_device_i
 			NVT_LOG("request irq %d succeed\n", client->irq);
 		}
 	}
-	update_hardware_info(TYPE_TOUCH, 5);
 
 	ret = nvt_get_lockdown_info(ts->lockdown_info);
 
@@ -1775,9 +1772,12 @@ static int32_t nvt_ts_probe(struct i2c_client *client, const struct i2c_device_i
 		NVT_ERR("Lockdown:0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x\n",
 				ts->lockdown_info[0], ts->lockdown_info[1], ts->lockdown_info[2], ts->lockdown_info[3],
 				ts->lockdown_info[4], ts->lockdown_info[5], ts->lockdown_info[6], ts->lockdown_info[7]);
-		update_hardware_info(TYPE_TP_MAKER, ts->lockdown_info[0] - 0x30);
 	}
 	ts->fw_name = nvt_get_config(ts);
+
+	tp_maker = kzalloc(20, GFP_KERNEL);
+	if (tp_maker == NULL)
+		NVT_ERR("fail to alloc vendor name memory\n");
 
 	device_init_wakeup(&client->dev, 1);
 	ts->dev_pm_suspend = false;
