@@ -1261,7 +1261,6 @@ static int ft8716_load_firmware(struct ft5x46_data *ft5x46,
 	u32 check_off = 0x20;
 	u32 start_addr = 0x00;
 	u8 packet_buf[16 + FT5X0X_PACKET_LENGTH];
-	u8 *tp_maker = NULL;
 
 	const struct firmware *fw;
 	int packet_num;
@@ -1300,10 +1299,7 @@ static int ft8716_load_firmware(struct ft5x46_data *ft5x46,
 			ft8716_reset_firmware(ft5x46);
 			return error;
 		}
-
-		if (tp_maker == NULL)
-			dev_err(ft5x46->dev, "fail to alloc vendor name memory\n");
-
+		update_hardware_info(TYPE_TP_MAKER, ft5x46->lockdown_info[0] - 0x30);
 		ft5x46->lockdown_info_acquired = true;
 		wake_up(&ft5x46->lockdown_info_acquired_wq);
 	}

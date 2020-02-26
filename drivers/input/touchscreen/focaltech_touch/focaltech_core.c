@@ -1905,6 +1905,8 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	ts_data->early_suspend.resume = fts_ts_late_resume;
 	register_early_suspend(&ts_data->early_suspend);
 #endif
+	update_hardware_info(TYPE_TOUCH, 3);
+	update_hardware_info(TYPE_TP_MAKER, ts_data->lockdown_info[0] - 0x30);
 
 	FTS_FUNC_EXIT();
 	return 0;
