@@ -38,6 +38,7 @@
 #include "sde_crtc.h"
 #include "sde_trace.h"
 #include "sde_core_irq.h"
+#include "dsi_drm.h"
 
 #define SDE_DEBUG_ENC(e, fmt, ...) SDE_DEBUG("enc%d " fmt,\
 		(e) ? (e)->base.base.id : -1, ##__VA_ARGS__)
@@ -1708,8 +1709,9 @@ static void _sde_encoder_update_vsync_source(struct sde_encoder_virt *sde_enc,
 
 		vsync_cfg.pp_count = sde_enc->num_phys_encs;
 		vsync_cfg.frame_rate = mode_info.frame_rate;
-		vsync_cfg.vsync_source =
-			sde_enc->cur_master->hw_pp->caps->te_source;
+		if (sde_enc->cur_master)
+			vsync_cfg.vsync_source =
+				sde_enc->cur_master->hw_pp->caps->te_source;
 		if (is_dummy)
 			vsync_cfg.vsync_source = SDE_VSYNC_SOURCE_WD_TIMER_1;
 		else if (disp_info->is_te_using_watchdog_timer)
@@ -2208,6 +2210,8 @@ static int sde_encoder_resource_control(struct drm_encoder *drm_enc,
 			SDE_DEBUG_ENC(sde_enc, "sw_event:%d, work cancelled\n",
 					sw_event);
 
+		msm_idle_set_state(drm_enc, true);
+
 		mutex_lock(&sde_enc->rc_lock);
 
 		/* return if the resource control is already in ON state */
@@ -2311,6 +2315,8 @@ static int sde_encoder_resource_control(struct drm_encoder *drm_enc,
 			idle_pc_duration = IDLE_SHORT_TIMEOUT;
 		else
 			idle_pc_duration = IDLE_POWERCOLLAPSE_DURATION;
+
+		msm_idle_set_state(drm_enc, false);
 
 		if (!autorefresh_enabled)
 			kthread_mod_delayed_work(
