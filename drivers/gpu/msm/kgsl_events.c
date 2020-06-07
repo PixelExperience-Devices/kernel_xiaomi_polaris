@@ -49,6 +49,7 @@ static void _kgsl_event_worker(struct work_struct *work)
 
 	trace_kgsl_fire_event(id, event->timestamp, event->result,
 		jiffies - event->created, event->func);
+	id = 0;
 
 	event->func(event->device, event->group, event->priv, event->result);
 

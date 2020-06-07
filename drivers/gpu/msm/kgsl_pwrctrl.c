@@ -402,6 +402,8 @@ unsigned int kgsl_pwrctrl_adjust_pwrlevel(struct kgsl_device *device,
 		pwr->constraint.type = KGSL_CONSTRAINT_NONE;
 	}
 
+	old_level = 0;
+
 	/*
 	 * Adjust the power level if required by thermal, max/min,
 	 * constraints, etc
