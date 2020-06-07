@@ -322,6 +322,7 @@ static void _retire_timestamp(struct kgsl_drawobj *drawobj)
 		trace_adreno_cmdbatch_retired(drawobj, -1, 0, 0, drawctxt->rb,
 			adreno_get_rptr(drawctxt->rb), 0);
 	}
+	drawctxt = NULL;
 	kgsl_drawobj_destroy(drawobj);
 }
 
@@ -659,6 +660,7 @@ static int sendcmd(struct adreno_device *adreno_dev,
 	trace_adreno_cmdbatch_submitted(drawobj, (int) dispatcher->inflight,
 		time.ticks, (unsigned long) secs, nsecs / 1000, drawctxt->rb,
 		adreno_get_rptr(drawctxt->rb));
+	drawctxt = NULL;
 
 	mutex_unlock(&device->mutex);
 
@@ -2365,6 +2367,7 @@ static void retire_cmdobj(struct adreno_device *adreno_dev,
 			ADRENO_DRAWOBJ_RB(drawobj),
 			adreno_get_rptr(drawctxt->rb), cmdobj->fault_recovery);
 	}
+	dispatcher = NULL;
 
 	drawctxt->submit_retire_ticks[drawctxt->ticks_index] =
 		end - cmdobj->submit_ticks;
