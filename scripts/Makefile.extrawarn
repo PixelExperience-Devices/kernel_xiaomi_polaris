@@ -72,4 +72,16 @@ KBUILD_CFLAGS += $(call cc-disable-warning, format-zero-length)
 KBUILD_CFLAGS += $(call cc-disable-warning, uninitialized)
 KBUILD_CFLAGS += $(call cc-disable-warning, pointer-to-enum-cast)
 endif
+
+# Disable noisy checks by default
+DTC_FLAGS += $(call dtc-option,-Wno-unit_address_vs_reg)
+DTC_FLAGS += $(call dtc-option,-Wno-unit_address_format)
+DTC_FLAGS += $(call dtc-option,-Wno-avoid_unnecessary_addr_size)
+DTC_FLAGS += $(call dtc-option,-Wno-alias_paths)
+DTC_FLAGS += $(call dtc-option,-Wno-gpios_property)
+DTC_FLAGS += $(call dtc-option,-Wno-graph_child_address)
+DTC_FLAGS += $(call dtc-option,-Wno-graph_port)
+DTC_FLAGS += $(call dtc-option,-Wno-unique_unit_address)
+DTC_FLAGS += $(call dtc-option,-Wno-pci_device_reg)
+
 endif
