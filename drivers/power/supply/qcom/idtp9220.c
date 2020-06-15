@@ -1412,12 +1412,12 @@ static int wireless_fb_notifier_cb(struct notifier_block *self,
 			blank = evdata->data;
 			if (*blank == DRM_BLANK_UNBLANK) {
 				di->screen_on = true;
-				pr_info("%s: screen_on\n", __func__);
+				pr_debug("%s: screen_on\n", __func__);
 				if (di->status == FULL_MODE)
 					idtp922x_set_pmi_icl(di, DC_FUL_CURRENT);
 			} else if (*blank == DRM_BLANK_POWERDOWN) {
 				di->screen_on = false;
-				pr_info("%s: screen_off\n", __func__);
+				pr_debug("%s: screen_off\n", __func__);
 				if (di->status == FULL_MODE)
 					idtp922x_set_pmi_icl(di, SCREEN_OFF_FUL_CURRENT);
 			}
