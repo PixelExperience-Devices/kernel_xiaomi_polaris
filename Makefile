@@ -749,11 +749,6 @@ ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 else
   ifeq ($(cc-name),clang)
     KBUILD_CFLAGS   += -O3
-    KBUILD_CFLAGS   += -mllvm -polly \
-                    -mllvm -polly-run-dce \
-                    -mllvm -polly-run-inliner \
-                    -mllvm -polly-opt-fusion=max \
-                    -mllvm -polly-vectorizer=polly
   else
     KBUILD_CFLAGS   += -O2
   endif
