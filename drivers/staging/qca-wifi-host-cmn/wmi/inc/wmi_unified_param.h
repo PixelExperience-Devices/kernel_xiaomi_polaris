@@ -5790,6 +5790,7 @@ typedef enum {
 #endif
 	wmi_roam_stats_event_id,
 	wmi_roam_scan_chan_list_id,
+	wmi_vdev_bcn_latency_event_id,
 	wmi_events_max,
 } wmi_conv_event_id;
 
@@ -6054,6 +6055,7 @@ typedef enum {
 	wmi_vdev_param_set_ba_mode,
 	wmi_vdev_param_autorate_misc_cfg,
 	wmi_vdev_param_amsdu_subframe_size_per_ac,
+	wmi_vdev_param_nan_config_features,
 
 	wmi_vdev_param_max,
 } wmi_conv_vdev_param_id;
@@ -6238,6 +6240,8 @@ typedef enum {
 	wmi_service_packet_capture_support,
 	wmi_service_time_sync_ftm,
 	wmi_roam_scan_chan_list_to_host_support,
+	wmi_service_host_scan_stop_vdev_all,
+	wmi_service_suiteb_roam_support,
 	wmi_services_max,
 } wmi_conv_service_ids;
 #define WMI_SERVICE_UNAVAILABLE 0xFFFF
