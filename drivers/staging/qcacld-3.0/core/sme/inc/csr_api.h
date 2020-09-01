@@ -359,6 +359,7 @@ typedef struct tagCsrScanResultFilter {
 	bool realm_check;
 	uint8_t fils_realm[2];
 	bool force_rsne_override;
+	qdf_time_t age_threshold;
 } tCsrScanResultFilter;
 
 typedef struct sCsrChnPower_ {
@@ -817,6 +818,7 @@ struct csr_roam_profile {
 	eCsrRoamBssType BSSType;
 	tCsrAuthList AuthType;
 	eCsrAuthType negotiatedAuthType;
+	tCsrAuthList akm_list;
 	tCsrEncryptionList EncryptionType;
 	/* This field is for output only, not for input */
 	eCsrEncryptionType negotiatedUCEncryptionType;
@@ -932,6 +934,7 @@ typedef struct tagCsrRoamConnectedProfile {
 	eCsrRoamBssType BSSType;
 	eCsrAuthType AuthType;
 	tCsrAuthList AuthInfo;
+	tCsrAuthList akm_list;
 	eCsrEncryptionType EncryptionType;
 	tCsrEncryptionList EncryptionInfo;
 	eCsrEncryptionType mcEncryptionType;
@@ -1511,6 +1514,7 @@ struct csr_roam_info {
 #endif
 	uint16_t roam_reason;
 	struct wlan_ies *disconnect_ies;
+	tSirSmeAssocInd *owe_pending_assoc_ind;
 };
 
 typedef struct tagCsrFreqScanInfo {
@@ -1794,6 +1798,9 @@ typedef QDF_STATUS (*csr_session_close_cb)(uint8_t session_id);
 #define CSR_IS_FW_FT_FILS_SUPPORTED(fw_akm_bitmap) \
 	(((fw_akm_bitmap) & (1 << AKM_FT_FILS))  ? true : false)
 
+#define CSR_IS_FW_SUITEB_ROAM_SUPPORTED(fw_akm_bitmap) \
+	(((fw_akm_bitmap) & (1 << AKM_SUITEB))  ? true : false)
+
 QDF_STATUS csr_set_channels(tpAniSirGlobal pMac, tCsrConfigParam *pParam);
 
 /* enum to string conversion for debug output */
@@ -1811,6 +1818,7 @@ typedef void (*tCsrTsmStatsCallback)(tAniTrafStrmMetrics tsmMetrics,
 #endif /* FEATURE_WLAN_ESE */
 typedef void (*tCsrSnrCallback)(int8_t snr, uint32_t staId, void *pContext);
 
+void csr_assoc_rej_free_rssi_disallow_list(struct sAniSirGlobal *mac);
 /**
  * csr_roam_issue_ft_preauth_req() - Initiate Preauthentication request
  * @max_ctx: Global MAC context
@@ -1889,4 +1897,14 @@ csr_update_pmf_cap_from_connected_profile(tCsrRoamConnectedProfile *profile,
 					  struct scan_filter *filter)
 {}
 #endif
+
+/**
+ * csr_update_owe_info() - Update OWE info
+ * @mac: mac context
+ * @assoc_ind: assoc ind
+ *
+ * Return: QDF_STATUS
+ */
+QDF_STATUS csr_update_owe_info(tpAniSirGlobal mac,
+			       tSirSmeAssocInd *assoc_ind);
 #endif

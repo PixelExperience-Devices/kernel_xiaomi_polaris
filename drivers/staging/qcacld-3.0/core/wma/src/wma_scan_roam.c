@@ -1809,14 +1809,10 @@ QDF_STATUS wma_process_roaming_config(tp_wma_handle wma_handle,
 				break;
 
 			mode = WMI_ROAM_SCAN_MODE_PERIODIC;
-			/* Don't use rssi triggered roam scans if external app
-			 * is in control of channel list.
-			 */
-			if (roam_req->ChannelCacheType != CHANNEL_LIST_STATIC ||
-			    roam_req->roam_force_rssi_trigger)
+			if (roam_req->roam_force_rssi_trigger)
 				mode |= WMI_ROAM_SCAN_MODE_RSSI_CHANGE;
 
-		} else {
+		} else if (roam_req->roam_force_rssi_trigger) {
 			mode = WMI_ROAM_SCAN_MODE_RSSI_CHANGE;
 		}
 
@@ -1958,7 +1954,8 @@ QDF_STATUS wma_process_roaming_config(tp_wma_handle wma_handle,
 
 		if (roam_req->reason == REASON_ROAM_STOP_ALL ||
 		    roam_req->reason == REASON_DISCONNECTED ||
-		    roam_req->reason == REASON_ROAM_SYNCH_FAILED) {
+		    roam_req->reason == REASON_ROAM_SYNCH_FAILED ||
+		    roam_req->reason == REASON_SUPPLICANT_DISABLED_ROAMING) {
 			mode = WMI_ROAM_SCAN_MODE_NONE;
 		} else {
 			if (csr_roamIsRoamOffloadEnabled(pMac))
@@ -2117,14 +2114,10 @@ QDF_STATUS wma_process_roaming_config(tp_wma_handle wma_handle,
 				break;
 
 			mode = WMI_ROAM_SCAN_MODE_PERIODIC;
-			/* Don't use rssi triggered roam scans if external app
-			 * is in control of channel list.
-			 */
-			if (roam_req->ChannelCacheType != CHANNEL_LIST_STATIC ||
-			    roam_req->roam_force_rssi_trigger)
+			if (roam_req->roam_force_rssi_trigger)
 				mode |= WMI_ROAM_SCAN_MODE_RSSI_CHANGE;
 
-		} else {
+		} else if (roam_req->roam_force_rssi_trigger) {
 			mode = WMI_ROAM_SCAN_MODE_RSSI_CHANGE;
 		}
 
@@ -2420,6 +2413,7 @@ static int wma_fill_roam_synch_buffer(tp_wma_handle wma,
 	wmi_key_material_ext *key_ft;
 	struct wma_txrx_node *iface = NULL;
 	wmi_roam_fils_synch_tlv_param *fils_info;
+	wmi_roam_pmk_cache_synch_tlv_param *pmk_cache_info;
 	int status = -EINVAL;
 	uint8_t kck_len;
 	uint8_t kek_len;
@@ -2504,14 +2498,14 @@ static int wma_fill_roam_synch_buffer(tp_wma_handle wma,
 		kck_len = KCK_192BIT_KEY_LEN;
 		kek_len = KEK_256BIT_KEY_LEN;
 
-		roam_synch_ind_ptr->kek_len = kek_len;
-		qdf_mem_copy(roam_synch_ind_ptr->kek,
-			     key_ft->key_buffer, kek_len);
-
 		roam_synch_ind_ptr->kck_len = kck_len;
 		qdf_mem_copy(roam_synch_ind_ptr->kck,
-			     (key_ft->key_buffer + kek_len),
-			     kck_len);
+			     key_ft->key_buffer, kck_len);
+
+		roam_synch_ind_ptr->kek_len = kek_len;
+		qdf_mem_copy(roam_synch_ind_ptr->kek,
+			     (key_ft->key_buffer + kck_len),
+			     kek_len);
 
 		qdf_mem_copy(roam_synch_ind_ptr->replay_ctr,
 			     (key_ft->key_buffer + kek_len + kck_len),
@@ -2558,6 +2552,23 @@ static int wma_fill_roam_synch_buffer(tp_wma_handle wma,
 		WMA_LOGD("Update ERP Seq Num %d, Next ERP Seq Num %d",
 			 roam_synch_ind_ptr->update_erp_next_seq_num,
 			 roam_synch_ind_ptr->next_erp_seq_num);
+	}
+
+	pmk_cache_info = param_buf->roam_pmk_cache_synch_info;
+	if (pmk_cache_info && (pmk_cache_info->pmk_len)) {
+		if (pmk_cache_info->pmk_len > SIR_PMK_LEN) {
+			WMA_LOGE("%s: Invalid pmk_len %d", __func__,
+				 pmk_cache_info->pmk_len);
+			wma_free_roam_synch_frame_ind(iface);
+			return status;
+		}
+
+		roam_synch_ind_ptr->pmk_len = pmk_cache_info->pmk_len;
+		qdf_mem_copy(roam_synch_ind_ptr->pmk, pmk_cache_info->pmk,
+			     pmk_cache_info->pmk_len);
+
+		qdf_mem_copy(roam_synch_ind_ptr->pmkid, pmk_cache_info->pmkid,
+			     SIR_PMKID_LEN);
 	}
 	wma_free_roam_synch_frame_ind(iface);
 	return 0;
@@ -3354,7 +3365,6 @@ wma_get_trigger_detail_str(struct wmi_roam_trigger_info *roam_info, char *buf)
 	case WMI_ROAM_TRIGGER_REASON_PER:
 	case WMI_ROAM_TRIGGER_REASON_BMISS:
 	case WMI_ROAM_TRIGGER_REASON_HIGH_RSSI:
-	case WMI_ROAM_TRIGGER_REASON_PERIODIC:
 	case WMI_ROAM_TRIGGER_REASON_MAWC:
 	case WMI_ROAM_TRIGGER_REASON_DENSE:
 	case WMI_ROAM_TRIGGER_REASON_BACKGROUND:
@@ -3392,8 +3402,17 @@ wma_get_trigger_detail_str(struct wmi_roam_trigger_info *roam_info, char *buf)
 		buf_left -= buf_cons;
 		return;
 	case WMI_ROAM_TRIGGER_REASON_LOW_RSSI:
-		buf_cons = qdf_snprint(temp, buf_left, "Low_rssi_threshold: %d",
-				       roam_info->rssi_trig_data.threshold);
+	case WMI_ROAM_TRIGGER_REASON_PERIODIC:
+		/*
+		 * Use roam_info->current_rssi get the RSSI of current AP after
+		 * roam scan is triggered. This avoids discrepency with the
+		 * next rssi threshold value printed in roam scan details.
+		 * roam_info->rssi_trig_data.threshold gives the rssi of AP
+		 * before the roam scan was triggered.
+		 */
+		buf_cons = qdf_snprint(temp, buf_left,
+				       " Current AP RSSI: %d",
+				       roam_info->current_rssi);
 		temp += buf_cons;
 		buf_left -= buf_cons;
 		return;
@@ -3519,11 +3538,11 @@ wma_rso_print_scan_info(struct wmi_roam_scan_data *scan, uint8_t vdev_id,
 		return;
 	}
 
-	if (WMI_ROAM_TRIGGER_REASON_LOW_RSSI == trigger) {
+	if (WMI_ROAM_TRIGGER_REASON_LOW_RSSI == trigger ||
+	    WMI_ROAM_TRIGGER_REASON_PERIODIC == trigger)
 		qdf_snprint(buf1, ROAM_FAILURE_BUF_SIZE,
 			    "next_rssi_threshold: %d dBm",
 			    scan->next_rssi_threshold);
-	}
 
 	wma_get_converted_timestamp(timestamp, time);
 	WMA_LOGI("%s [ROAM_SCAN]: VDEV[%d] Scan_type: %s %s %s",
@@ -3967,7 +3986,7 @@ QDF_STATUS wma_roam_scan_fill_self_caps(tp_wma_handle wma_handle,
 	if (val)
 		selfCaps.apsd = 1;
 
-	selfCaps.rrm = pMac->rrm.rrmSmeContext.rrmConfig.rrm_enabled;
+	selfCaps.rrm = pMac->rrm.rrmConfig.rrm_enabled;
 
 	if (wlan_cfg_get_int(pMac, WNI_CFG_BLOCK_ACK_ENABLED, &val) !=
 	    QDF_STATUS_SUCCESS) {
