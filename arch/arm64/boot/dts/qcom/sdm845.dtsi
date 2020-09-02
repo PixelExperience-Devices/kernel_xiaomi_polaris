@@ -525,7 +525,7 @@
 			reg = <0 0x85700000 0 0x600000>;
 		};
 
-		xbl_region: xbl_region@85e00000 {
+		xbl_region: xbl_region@85d00000 {
 			no-map;
 			reg = <0 0x85d00000 0 0x200000>;
 		};
