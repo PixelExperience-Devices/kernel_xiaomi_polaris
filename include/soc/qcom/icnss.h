@@ -49,6 +49,8 @@ struct icnss_driver_ops {
 	int (*pm_resume)(struct device *dev);
 	int (*suspend_noirq)(struct device *dev);
 	int (*resume_noirq)(struct device *dev);
+	int (*suspend_late)(struct device *dev);
+	int (*resume_early)(struct device *dev);
 	int (*uevent)(struct device *dev, struct icnss_uevent_data *uevent);
 	int (*set_therm_state)(struct device *dev, unsigned long thermal_state);
 	int (*idle_shutdown)(struct device *dev);
