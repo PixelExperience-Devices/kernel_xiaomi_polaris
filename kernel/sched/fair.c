@@ -7458,7 +7458,7 @@ retry:
 	if (prefer_idle && (best_idle_cpu != -1)) {
 		trace_sched_find_best_target(p, prefer_idle, min_util, cpu,
 					     best_idle_cpu, best_active_cpu,
-					     -1, best_idle_cpu, -1);
+					     best_idle_cpu, -1);
 
 		return best_idle_cpu;
 	}
