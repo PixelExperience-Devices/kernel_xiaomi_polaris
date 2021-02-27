@@ -1699,7 +1699,7 @@ int adreno_gmu_fenced_write(struct adreno_device *adreno_dev,
 			udelay(GMU_WAKEUP_DELAY_US);
 		else
 			usleep_range(GMU_WAKEUP_DELAY_US,
-				3 * GMU_WAKEUP_DELAY_US);
+				12 * GMU_WAKEUP_DELAY_US);
 
 		/* Try to write the fenced register again */
 		adreno_writereg(adreno_dev, offset, val);
