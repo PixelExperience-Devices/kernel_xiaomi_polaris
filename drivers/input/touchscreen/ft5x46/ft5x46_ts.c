@@ -3037,7 +3037,7 @@ static int fb_notifier_cb(struct notifier_block *self,
 {
 	int *blank;
 	int rc = 0;
-	struct drm_notify_data *evdata = data;
+	struct msm_drm_notifier *evdata = data;
 	struct ft5x46_data *ft5x46 =
 		container_of(self, struct ft5x46_data, drm_notifier);
 
@@ -3046,16 +3046,17 @@ static int fb_notifier_cb(struct notifier_block *self,
 		return rc;
 	}
 	/* Receive notifications from primary panel only */
-	if (evdata && evdata->data && ft5x46 && evdata->is_primary) {
-		if (event == DRM_EVENT_BLANK) {
+	if (evdata && evdata->data && ft5x46 \
+				&& evdata->id == MSM_DRM_PRIMARY_DISPLAY) {
+		if (event == MSM_DRM_EVENT_BLANK) {
 			blank = evdata->data;
-			if (*blank == DRM_BLANK_UNBLANK) {
+			if (*blank == MSM_DRM_BLANK_UNBLANK) {
 				dev_dbg(ft5x46->dev, "##### UNBLANK SCREEN #####\n");
 				ft5x46_input_enable(ft5x46->input);
 				if (!ft5x46->wakeup_mode)
 					rc = ft5x46_panel_power(ft5x46, true);
 				drm_dsi_ulps_enable(false);
-			} else if (*blank == DRM_BLANK_POWERDOWN) {
+			} else if (*blank == MSM_DRM_BLANK_POWERDOWN) {
 				dev_dbg(ft5x46->dev, "##### BLANK SCREEN #####\n");
 				ft5x46_input_disable(ft5x46->input);
 #ifdef CONFIG_TOUCHSCREEN_FT5X46P_PROXIMITY
@@ -3065,13 +3066,13 @@ static int fb_notifier_cb(struct notifier_block *self,
 #endif
 					rc = ft5x46_panel_power(ft5x46, false);
 			}
-		} else if (event == DRM_EARLY_EVENT_BLANK) {
+		} else if (event == MSM_DRM_EARLY_EVENT_BLANK) {
 			blank = evdata->data;
 #ifdef CONFIG_TOUCHSCREEN_FT5X46P_PROXIMITY
-			if (*blank == DRM_BLANK_POWERDOWN &&
+			if (*blank == MSM_DRM_BLANK_POWERDOWN &&
 				(ft5x46->wakeup_mode || ft5x46->proximity_enable)) {
 #else
-			if (*blank == DRM_BLANK_POWERDOWN && ft5x46->wakeup_mode) {
+			if (*blank == MSM_DRM_BLANK_POWERDOWN && ft5x46->wakeup_mode) {
 #endif
 				pr_debug("Enable suspend ulps\n");
 				drm_dsi_ulps_enable(true);
@@ -3088,13 +3089,13 @@ static int ft5x46_configure_sleep(struct ft5x46_data *ft5x46, bool enable)
 
 	ft5x46->drm_notifier.notifier_call = fb_notifier_cb;
 	if (enable) {
-		ret = drm_register_client(&ft5x46->drm_notifier);
+		ret = msm_drm_register_client(&ft5x46->drm_notifier);
 		if (ret) {
 			dev_err(ft5x46->dev,
 				"Unable to register fb_notifier, err: %d\n", ret);
 		}
 	} else {
-		ret = drm_unregister_client(&ft5x46->drm_notifier);
+		ret = msm_drm_unregister_client(&ft5x46->drm_notifier);
 		if (ret) {
 			dev_err(ft5x46->dev,
 				"Unable to unregister fb_notifier, err: %d\n", ret);
