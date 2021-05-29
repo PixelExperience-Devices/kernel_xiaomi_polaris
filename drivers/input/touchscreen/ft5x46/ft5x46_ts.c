@@ -4014,8 +4014,6 @@ struct ft5x46_data *ft5x46_probe(struct device *dev,
 	}
 	ft_data = ft5x46;
 	ft5x46->dev  = dev;
-	pm_qos_add_request(&ft5x46->pm_qos_req, PM_QOS_CPU_DMA_LATENCY,
-			PM_QOS_DEFAULT_VALUE);
 	ft5x46->irq  = gpio_to_irq(pdata->irq_gpio);
 	ft5x46->bops = bops;
 	ft5x46->lockdown_info_acquired = false;
@@ -4203,6 +4201,8 @@ struct ft5x46_data *ft5x46_probe(struct device *dev,
 	}
 #endif
 
+	pm_qos_add_request(&ft5x46->pm_qos_req, PM_QOS_CPU_DMA_LATENCY,
+			PM_QOS_DEFAULT_VALUE);
 	/* start interrupt process */
 	error = request_threaded_irq(ft5x46->irq, NULL, ft5x46_interrupt,
 				IRQF_TRIGGER_FALLING | IRQF_ONESHOT, "ft5x46", ft5x46);
