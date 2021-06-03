@@ -50,7 +50,7 @@ int getChannelsLength(void)
 	int ret;
 	u8 data[2];
 
-	if (data == NULL) {
+	if (!data) {
 		logError(1, "%s getChannelsLength: ERROR %08X\n", tag,
 			 ERROR_ALLOC);
 		return ERROR_ALLOC;

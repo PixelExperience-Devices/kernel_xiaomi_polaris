@@ -1268,7 +1268,7 @@ static int hdcp_lib_start_auth(struct hdcp_lib_handle *handle)
 
 	if ((rc < 0) || (rsp_buf->status != HDCP_SUCCESS) ||
 	    (rsp_buf->commandid != HDCP_TXMTR_START_AUTHENTICATE) ||
-	    (rsp_buf->msglen == 0) || (rsp_buf->message == NULL)) {
+	    (rsp_buf->msglen == 0) || (!rsp_buf->message)) {
 		pr_err("qseecom cmd failed with err = %d, status = %d\n",
 		       rc, rsp_buf->status);
 		rc = -EINVAL;
@@ -1338,7 +1338,7 @@ static void hdcp_lib_stream(struct hdcp_lib_handle *handle)
 	if ((rc < 0) || (rsp_buf->status != HDCP_SUCCESS) ||
 		(rsp_buf->msglen == 0) ||
 		(rsp_buf->commandid != HDCP_TXMTR_QUERY_STREAM_TYPE) ||
-		(rsp_buf->msg == NULL)) {
+		(!rsp_buf->msg)) {
 		pr_err("qseecom cmd failed with err=%d status=%d\n",
 		       rc, rsp_buf->status);
 		rc = -EINVAL;
@@ -1924,7 +1924,7 @@ static void hdcp_lib_msg_recvd(struct hdcp_lib_handle *handle)
 	if ((rc < 0) || (rsp_buf->status != HDCP_SUCCESS) ||
 		(rsp_buf->msglen == 0) ||
 		(rsp_buf->commandid != HDCP_TXMTR_PROCESS_RECEIVED_MESSAGE) ||
-		(rsp_buf->msg == NULL)) {
+		(!rsp_buf->msg)) {
 		pr_err("qseecom cmd failed with err=%d status=%d\n",
 		       rc, rsp_buf->status);
 		rc = -EINVAL;
