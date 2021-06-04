@@ -1075,10 +1075,6 @@ static int dsi_message_tx(struct dsi_ctrl *dsi_ctrl,
 		goto error;
 	}
 
-	pr_debug("cmd tx type=%02x cmd=%02x len=%d last=%d\n", msg->type,
-		 msg->tx_len ? *((u8 *)msg->tx_buf) : 0, msg->tx_len,
-		 (msg->flags & MIPI_DSI_MSG_LASTCOMMAND) != 0);
-
 	if (flags & DSI_CTRL_CMD_NON_EMBEDDED_MODE) {
 		cmd_mem.offset = dsi_ctrl->cmd_buffer_iova;
 		cmd_mem.en_broadcast = (flags & DSI_CTRL_CMD_BROADCAST) ?
