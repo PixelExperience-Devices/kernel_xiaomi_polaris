@@ -44,7 +44,6 @@
 #ifdef CONFIG_DRM
 #include <linux/notifier.h>
 #include <drm/drm_notifier.h>
-#include <linux/msm_drm_notify.h>
 #include <drm/drm_panel.h>
 #endif
 
