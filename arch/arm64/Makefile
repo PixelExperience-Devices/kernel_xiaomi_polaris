@@ -140,7 +140,7 @@ endif
 
 ifeq ($(cc-name),clang)
 KBUILD_CFLAGS += $(call cc-disable-warning, asm-operand-widths)
-KBUILD_CFLAGS += -mcpu=cortex-a75+crypto+crc
+KBUILD_CFLAGS += -mcpu=cortex-a75+crypto+crc+nodotprod
 endif
 
 # KASAN_SHADOW_OFFSET = VA_START + (1 << (VA_BITS - 3)) - (1 << 61)
