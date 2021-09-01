@@ -223,7 +223,7 @@
 	qcom,lra-auto-res-mode = "qwd";
 	qcom,lra-res-cal-period = <4>;
 	qcom,effect-max = <3>;
-	qcom,effect-arry = [3e 3e be a0 00 00 00 00
+	qcom,effect-arry = [3e be 00 00 00 00 00 00
 	3e 3e 3e be be 00 00 00
 	3e 3e 3e 3e be be a0 90];
 	status = "okay";
