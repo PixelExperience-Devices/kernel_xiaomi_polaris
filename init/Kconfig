@@ -1453,13 +1453,13 @@ config SCHED_TUNE
 
 config STUNE_ASSIST
 	bool "SchedTune configuration helper"
-	depends on SCHED_TUNE
+	depends on CGROUP_SCHEDTUNE
 	depends on ANDROID
 	help
 	  This option enables the configuration of default SchedTune
 	  parameters from kernel.
 
-	  If unsure, say N.
+	  Say N if unsure.
 
 config DEFAULT_USE_ENERGY_AWARE
 	bool "Default to enabling the Energy Aware Scheduler feature"
