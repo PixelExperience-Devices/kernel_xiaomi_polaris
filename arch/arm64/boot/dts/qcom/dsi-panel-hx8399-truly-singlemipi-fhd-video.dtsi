@@ -46,7 +46,6 @@
 
 		qcom,ulps-enabled;
  		qcom,suspend-ulps-enabled;
-		qcom,panel-allow-phy-poweroff;
 
 		qcom,mdss-dsi-display-timings {
 			timing@0 {

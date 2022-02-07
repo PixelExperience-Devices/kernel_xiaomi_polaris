@@ -59,7 +59,6 @@
 		qcom,dispparam-enabled;
 		/* qcom,esd-err-irq-gpio = <&tlmm 52 0>; */
  		qcom,suspend-ulps-enabled;
-		qcom,panel-allow-phy-poweroff;
 		qcom,mdss-dsi-display-timings {
 			timing@0{
 				qcom,mdss-dsi-panel-width = <1080>;

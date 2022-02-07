@@ -60,7 +60,6 @@
 		qcom,mdss-night-brightness = <7 25 43 61>;
 		qcom,ulps-enabled;
  		qcom,suspend-ulps-enabled;
-		qcom,panel-allow-phy-poweroff;
 		qcom,mdss-dsi-display-timings {
 			timing@0{
 				qcom,mdss-dsi-panel-width = <1080>;
