@@ -776,8 +776,7 @@ int a6xx_preemption_init(struct adreno_device *adreno_dev)
 
 	/* Allocate mem for storing preemption counters */
 	ret = kgsl_allocate_global(device, &preempt->counters,
-		adreno_dev->num_ringbuffers *
-		A6XX_CP_CTXRECORD_PREEMPTION_COUNTER_SIZE, 0, 0,
+		PAGE_SIZE, 0, 0,
 		"preemption_counters");
 	if (ret)
 		goto err;
