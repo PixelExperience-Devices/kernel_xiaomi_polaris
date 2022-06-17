@@ -360,7 +360,7 @@ static unsigned int _perfcounter_show(struct adreno_device *adreno_dev)
 }
 
 static int _perfcounter_store(struct adreno_device *adreno_dev,
-							unsigned int val)
+		unsigned int val)
 {
 	struct kgsl_device *device = KGSL_DEVICE(adreno_dev);
 
