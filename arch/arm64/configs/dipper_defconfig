@@ -3041,7 +3041,7 @@ CONFIG_FB_SYS_FOPS=y
 # CONFIG_FB_SMSCUFX is not set
 # CONFIG_FB_UDL is not set
 # CONFIG_FB_IBM_GXT4500 is not set
-CONFIG_FB_VIRTUAL=y
+# CONFIG_FB_VIRTUAL is not set
 # CONFIG_FB_METRONOME is not set
 # CONFIG_FB_MB862XX is not set
 # CONFIG_FB_MSM is not set
