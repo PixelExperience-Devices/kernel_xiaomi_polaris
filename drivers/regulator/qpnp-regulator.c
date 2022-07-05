@@ -2422,7 +2422,6 @@ int __init qpnp_regulator_init(void)
 
 	return platform_driver_register(&qpnp_regulator_driver);
 }
-EXPORT_SYMBOL(qpnp_regulator_init);
 
 static void __exit qpnp_regulator_exit(void)
 {
