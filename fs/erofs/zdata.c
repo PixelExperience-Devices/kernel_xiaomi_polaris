@@ -1302,7 +1302,7 @@ submit_bio_retry:
 				bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
 
 				bio->bi_end_io = z_erofs_decompressqueue_endio;
-				bio_set_dev(bio, sb->s_bdev);
+				bio->bi_bdev = sb->s_bdev;
 				bio->bi_iter.bi_sector = (sector_t)cur <<
 					LOG_SECTORS_PER_BLOCK;
 				bio->bi_private = bi_private;
