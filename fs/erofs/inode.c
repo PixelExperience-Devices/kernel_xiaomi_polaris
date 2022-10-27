@@ -337,17 +337,19 @@ struct inode *erofs_iget(struct super_block *sb,
 	return inode;
 }
 
-int erofs_getattr(const struct path *path, struct kstat *stat,
-		  u32 request_mask, unsigned int query_flags)
+int erofs_getattr(struct vfsmount *mnt, struct dentry *dentry,
+			struct kstat *stat)
 {
-	struct inode *const inode = d_inode(path->dentry);
+	struct inode *const inode = d_inode(dentry);
 
+#if 0
 	if (erofs_inode_is_data_compressed(EROFS_I(inode)->datalayout))
 		stat->attributes |= STATX_ATTR_COMPRESSED;
 
 	stat->attributes |= STATX_ATTR_IMMUTABLE;
 	stat->attributes_mask |= (STATX_ATTR_COMPRESSED |
 				  STATX_ATTR_IMMUTABLE);
+#endif
 
 	generic_fillattr(inode, stat);
 	return 0;
