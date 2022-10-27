@@ -61,6 +61,7 @@ struct erofs_sb_info {
 
 	/* the dedicated workstation for compression */
 	struct radix_tree_root workstn_tree;
+	spinlock_t tree_lock;
 
 	/* threshold for decompression synchronously */
 	unsigned int max_sync_decompress_pages;

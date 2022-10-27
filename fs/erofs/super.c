@@ -571,6 +571,7 @@ static int erofs_fill_super(struct super_block *sb, void *data, int silent)
 
 #ifdef CONFIG_EROFS_FS_ZIP
 	INIT_RADIX_TREE(&sbi->workstn_tree, GFP_ATOMIC);
+	spin_lock_init(&sbi->tree_lock);
 #endif
 
 	/* get the root inode */
