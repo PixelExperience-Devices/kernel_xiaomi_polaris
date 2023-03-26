@@ -364,8 +364,6 @@ static ssize_t mipi_dsi_device_transfer(struct mipi_dsi_device *dsi,
 		msg->flags |= MIPI_DSI_MSG_USE_LPM;
 	msg->flags |= MIPI_DSI_MSG_LASTCOMMAND;
 
-	msg->flags |= MIPI_DSI_MSG_LASTCOMMAND;
-
 	return ops->transfer(dsi->host, msg);
 }
 
