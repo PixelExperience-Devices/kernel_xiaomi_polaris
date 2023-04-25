@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 - 2017 Novatek, Inc.
- * Copyright (C) 2019 XiaoMi, Inc.
+ * Copyright (C) 2018 XiaoMi, Inc.
  *
  * $Revision: 20544 $
  * $Date: 2017-12-20 11:08:15 +0800 (週三, 20 十二月 2017) $
@@ -860,6 +860,7 @@ static const char *nvt_get_config(struct nvt_ts_data *ts)
 	NVT_LOG("Choose config %d: %s", i,
 		 ts->config_array[i].nvt_cfg_name);
 	ts->current_index = i;
+
 	return ts->config_array[i].nvt_cfg_name;
 }
 
@@ -1065,9 +1066,11 @@ static void nvt_switch_mode_work(struct work_struct *work)
 	struct nvt_mode_switch *ms = container_of(work, struct nvt_mode_switch, switch_mode_work);
 	struct nvt_ts_data *data = ms->nvt_data;
 	unsigned char value = ms->mode;
+	char ch[64] = {0x0,};
 
 	if (value >= INPUT_EVENT_WAKUP_MODE_OFF && value <= INPUT_EVENT_WAKUP_MODE_ON) {
 		data->gesture_enabled = value - INPUT_EVENT_WAKUP_MODE_OFF;
+		snprintf(ch, sizeof(ch), "%s", data->gesture_enabled ? "enabled" : "disabled");
 	} else {
 		NVT_ERR("Does not support touch mode %d\n", value);
 	}
